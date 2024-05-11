@@ -209,7 +209,7 @@ $Opt["smartScoreCompare"] = true;
 //                   originate from localhost.
 
 
-$Opt["dsn"] = "mysql://root:".$_ENV["MYSQL_ROOT_PASSWORD"]."@mysql:3306/".$_ENV["MYSQL_DATABASE"];
+$Opt["dsn"] = "mysql://root:".$_ENV["MYSQL_ROOT_PASSWORD"]."@mariadb:3306/".$_ENV["MYSQL_DATABASE"];
 // EXTERNAL SOFTWARE CONFIGURATION
 //
 //   dbHost          Database host. Defaults to localhost.
