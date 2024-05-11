@@ -6,35 +6,36 @@ services:
     # in a web interface what are the sent mail, uncomment this
     # and comment the other smtp container.
     # The web interface is accessible at localhost:9002
-    #smtp:
-    #    image: mailhog/mailhog:v1.0.1
-    #    restart: always
-    #    expose:
-    #        - "25"
-    #    environment:
-    #        MH_SMTP_BIND_ADDR: 0.0.0.0:25
-    #    ports:
-    #        - 9002:8025
-
     smtp:
-        build:
-            context: ./docker/smtp
+        platform: linux/x86_64
+        image: mailhog/mailhog:v1.0.1
         restart: always
         expose:
             - "25"
-        volumes:
-            - ./mail-spool:/var/spool/postfix
-            # you can store mail log in a volume 
-            # (but create the file locally before startup)
-            #- ./logs/smtp/maillog:/var/log/maillog
         environment:
-            SMTP_SERVER: ${SMTP_SERVER}
-            SMTP_PORT: ${SMTP_PORT}
-            SMTP_USERNAME: ${SMTP_USERNAME}
-            SMTP_PASSWORD:  ${SMTP_PASSWORD}
-            SERVER_HOSTNAME: ${SERVER_HOSTNAME}
-            DESTINATION_CONCURRENCY_LIMIT: "1"
-            DESTINATION_RATE_DELAY: "1s"
+            MH_SMTP_BIND_ADDR: 0.0.0.0:25
+        ports:
+            - 9002:8025
+
+   #  smtp:
+   #      build:
+   #          context: ./docker/smtp
+   #      restart: always
+   #      expose:
+   #          - "25"
+   #      volumes:
+   #          - ./mail-spool:/var/spool/postfix
+   #          # you can store mail log in a volume 
+   #          # (but create the file locally before startup)
+   #          #- ./logs/smtp/maillog:/var/log/maillog
+   #      environment:
+   #          SMTP_SERVER: ${SMTP_SERVER}
+   #          SMTP_PORT: ${SMTP_PORT}
+   #          SMTP_USERNAME: ${SMTP_USERNAME}
+   #          SMTP_PASSWORD:  ${SMTP_PASSWORD}
+   #          SERVER_HOSTNAME: ${SERVER_HOSTNAME}
+   #          DESTINATION_CONCURRENCY_LIMIT: "1"
+   #          DESTINATION_RATE_DELAY: "1s"
 
 
     php:
@@ -50,6 +51,7 @@ services:
             - ./docker/php/php.conf:/usr/local/etc/php/conf.d/custom.ini:ro
             - ./logs/php:/var/log
         environment:
+            MYSQL: mariadb
             MYSQL_USER: hotcrp
             MYSQL_PASSWORD: hotcrppwd
             MYSQL_DATABASE: hotcrp
@@ -72,8 +74,9 @@ services:
         depends_on:
             - php
  
-    mysql:
-        image: mysql:8.0.26
+    mariadb:
+        platform: linux/x86_64
+        image: mariadb:11
         restart: always
         command: --max_allowed_packet=20485760
         volumes:
@@ -84,6 +87,8 @@ services:
         depends_on:
             - php
         environment:
+            MYSQL: mariadb
+            MYSQLADMIN: mariadb-admin
             MYSQL_USER: hotcrp
             MYSQL_PASSWORD: hotcrppwd
             MYSQL_DATABASE: hotcrp
